@@ -46,7 +46,37 @@ double iir_2_direct_form_I(iir_2_C * self, double x0) {
 		den += A(i) * Y(i);
 	}
 
-	return (Y(0) = num - den);
+	return ( Y(0) = num - den );
+
+}
+
+double iir_2_direct_form_I_wrapped(iir_2_C * self, double x0, WrappingMode_E mode) {
+
+	double num = 0.0;
+	double den = 0.0;
+
+	PUSH(( mode == WrappingMode_180 ) ? ( MOD_180(x0) ) : ( MOD_360(x0) ));
+
+	double d = X(0) - X(1);
+	double w = 0.0;
+	if (180.0 < fabs(d)) {
+		w = copysign(360.0, d);
+		for (int i=1 ; i<(FILTER_ORDER + 1); i++) {
+			X(i) += w;
+			Y(i) += w;
+		}
+	}
+
+	for (int i=0 ; i<(FILTER_ORDER + 1) ; i++) {
+		num += B(i) * X(i);
+	}
+	for (int i=1 ; i<3 ; i++) {
+		den += A(i) * Y(i);
+	}
+
+	Y(0) = num - den;
+
+	return (( mode == WrappingMode_180 ) ? ( MOD_180(Y(0)) ) : ( MOD_360(Y(0)) ));
 
 }
 
@@ -56,12 +86,31 @@ int main(int argc, char * argv[]) {
 
 	iir_2_C u = {};
 
-	iir_2_butterworth(& u, 45, 360, 0.0);
+	iir_2_butterworth(& u, 45, 360, 170.0);
 
 	for (int i=0 ; i<25 ; i++) {
-		double x = (i < 5) ? (0.0) : (1.0);
+		double x = (i < 5) ? (170.0) : (-170.0);
+		//double y = iir_2_direct_form_I(&u, x);
+		double y = iir_2_direct_form_I_wrapped(&u, x, WrappingMode_180);
+		printf("%d\t%f\t%f\n", i, x, y);
+	}
+
+	iir_2_butterworth(& u, 45, 360, 10.0);
+
+	for (int i=0 ; i<25 ; i++) {
+		double x = (i < 5) ? (10.0) : (-10.0);
+		//double y = iir_2_direct_form_I(&u, x);
+		double y = iir_2_direct_form_I_wrapped(&u, x, WrappingMode_360);
+		printf("%d\t%f\t%f\n", i, x, y);
+	}
+
+	iir_2_butterworth(& u, 45, 360, 10.0);
+
+	for (int i=0 ; i<25 ; i++) {
+		double x = (i < 5) ? (10.0) : (-10.0);
+		//double y = iir_2_direct_form_I(&u, x);
 		double y = iir_2_direct_form_I(&u, x);
-		printf("%f\t%f\n", x, y);
+		printf("%d\t%f\t%f\n", i, x, y);
 	}
 
 }

@@ -45,12 +45,15 @@ class Filter_IIR_direct_form_I(Filter_IIR) :
 
 		self.x = [x0,] + [w + x for x in self.x[:-1]]
 		self.y = [0.0,] + [w + y for y in self.y[:-1]]
+
 				
 		B = sum((b * x) for b, x in zip(self.b, self.x))
 		A = sum((a * y) for a, y in zip(self.a[1:], self.y[1:]))
 		y0 = B - A
 				
 		self.y[0] = y0
+		
+		print(self.x, self.y)
 		
 		return self.y[0] % 360.0
 

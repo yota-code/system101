@@ -25,5 +25,16 @@ typedef struct {
 	X(0) = (x0); \
 }
 
+#define MOD_360(x) (fmod((fmod(x, 360.0) + 360.0), 360.0))
+#define MOD_180(x) ( 180.0 <= MOD_360(x) ) ? ( MOD_360(x) - 360.0 ) : ( MOD_360(x) )
+
+typedef enum {
+	WrappingMode_360=0,
+	WrappingMode_180=1
+} WrappingMode_E;
+
+
 void iir_2_butterworth(iir_2_C * self, double fc, double fs, double ini_value) ;
 double iir_2_direct_form_I(iir_2_C * self, double x0) ;
+double iir_2_direct_form_I_wrapped(iir_2_C * self, double x0, WrappingMode_E mode) ;
+
