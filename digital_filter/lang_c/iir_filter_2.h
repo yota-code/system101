@@ -33,6 +33,8 @@ typedef enum {
 	WrappingMode_180=1
 } WrappingMode_E;
 
+// todo, change to rad/deg and signed unsigned
+
 void iir_2_butterworth(iir_2_C * self, double fc, double fs, double ini_value) ;
 double iir_2_direct_form_I(iir_2_C * self, double x0) ;
 double iir_2_direct_form_I_wrapped(iir_2_C * self, double x0, WrappingMode_E mode) ;

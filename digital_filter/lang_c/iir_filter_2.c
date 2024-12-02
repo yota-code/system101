@@ -2,7 +2,7 @@
 #include <string.h>
 
 #ifdef AUTOTEST
-#include <stdio.h>
+	#include <stdio.h>
 #endif
 
 #include "iir_filter_2.h"
